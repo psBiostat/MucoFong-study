@@ -1,4 +1,14 @@
+#############################################################################"
+#
+#  Regularized regression for variable selection using taxonomic information
+#
+#############################################################################"
+
 Boots_Phyglm_LOO_CV_Cont <- function(Data, B){
+  # Data: list of three objects
+  #      $X: numeric matrix of relative abundance. Columns represent OTUs and rows represent patients
+  #      $y: numeric vector reponse variable
+  #      $Taxonomy: character matrix of phylogenetic structure. Each column represent a taxonomic level and each row is associated an OTU
   
   indseulOTU <- which(apply(Data$X, 2, function(x)sum(x!=0))==1) #Chercher les OTUs qui sont que chez un seul patient
   
