@@ -1,3 +1,28 @@
+Boots_Phyglm_LOO_CV_Cont <- function(Data, B){
+  
+  indseulOTU <- which(apply(Data$X, 2, function(x)sum(x!=0))==1) #Chercher les OTUs qui sont que chez un seul patient
+  
+  #Imposer que ces individus soit dans l'échantillon boot
+  k=0
+  indseul <- c()
+  for(j in indseulOTU){
+    k=k+1
+    indseul[k] <- which(Data$X[,j]!=0) #On repère les individus
+  }
+  
+  Res_Beta_Boot <- list()
+  #Bootstrap procedure
+  for(b in 1:B){
+    
+    bootid <- sample(seq(1:dim(Data$X)[1])[-indseul], dim(Data$X)[1] - length(indseul), replace = TRUE)
+    fit_VEMS_Boot <- phyglm_LOO_CV_Cont(x = Data$X[bootid,], y = Data$VEMS[bootid,], taxonomy = Data$Taxonomy,
+                                        family = "gaussian")
+    Res_Beta_Boot[[b]] <- c(fit_VEMS_Boot$a0, fit_VEMS_Boot$beta)
+    
+  }
+  return(Res_Beta_Boot)
+}
+                            
 phyglm_LOO_CV_Log <- function (x, y, taxonomy, family = "binomial", weights,
                                offset = NULL, alpha = 1, nlambda = 100,
                                lambda.min.ratio = ifelse(nobs < nvars, 0.01, 1e-08), lambda = NULL,
